@@ -16,693 +16,421 @@
     --text: #1A1A2E;
     --muted: #6B6B7B;
   }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--cream); color:var(--text); font-family:'DM Sans',sans-serif; font-weight:300; overflow-x:hidden; }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* ═══ AVIONES ═══ */
+  .sky-canvas {
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:9999;
+    overflow:hidden;
+  }
+  .plane {
+    position:absolute;
+    font-size:28px;
+    opacity:0;
+    filter:drop-shadow(0 2px 8px rgba(0,0,0,0.25));
+    animation:flyPlane linear infinite;
+  }
+  .plane.small { font-size:18px; }
+  .plane.big   { font-size:38px; }
 
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--cream);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    overflow-x: hidden;
+  @keyframes flyPlane {
+    0%   { opacity:0; transform:translateX(-120px) translateY(0px) rotate(0deg); }
+    5%   { opacity:0.9; }
+    95%  { opacity:0.9; }
+    100% { opacity:0; transform:translateX(calc(100vw + 200px)) translateY(var(--drift)) rotate(var(--tilt)); }
   }
 
-  /* ── HERO ── */
+  /* ═══ HERO ═══ */
   .hero {
-    min-height: 100vh;
-    background: var(--navy);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    text-align: center;
-    padding: 60px 40px;
+    min-height:100vh;
+    background:var(--navy);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    position:relative; overflow:hidden; text-align:center; padding:60px 40px;
+  }
+  .hero-bg-layers {
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 80%, rgba(27,107,107,0.4) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 20%, rgba(201,168,76,0.25) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 50% 50%, rgba(224,90,58,0.12) 0%, transparent 60%);
+  }
+  /* Estrellas */
+  .stars {
+    position:absolute; inset:0; overflow:hidden;
+  }
+  .star {
+    position:absolute;
+    width:2px; height:2px;
+    background:rgba(255,255,255,0.6);
+    border-radius:50%;
+    animation:twinkle ease-in-out infinite;
   }
 
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 20% 80%, rgba(27,107,107,0.35) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 20%, rgba(201,168,76,0.2) 0%, transparent 55%),
-      radial-gradient(ellipse 50% 40% at 50% 50%, rgba(224,90,58,0.1) 0%, transparent 60%);
+  @keyframes twinkle {
+    0%,100% { opacity:0.2; transform:scale(1); }
+    50%      { opacity:1;   transform:scale(1.4); }
   }
 
   .hero-badge {
-    display: inline-block;
-    border: 1px solid rgba(201,168,76,0.6);
-    color: var(--gold);
-    font-size: 11px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    padding: 8px 24px;
-    border-radius: 40px;
-    margin-bottom: 40px;
-    position: relative;
+    display:inline-block;
+    border:1px solid rgba(201,168,76,0.6);
+    color:var(--gold);
+    font-size:11px; letter-spacing:4px; text-transform:uppercase;
+    padding:8px 24px; border-radius:40px; margin-bottom:40px;
+    position:relative;
+    animation:fadeDown 1s ease 0.2s both;
   }
-
+  @keyframes fadeDown {
+    from { opacity:0; transform:translateY(-20px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
   .hero h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(52px, 9vw, 110px);
-    font-weight: 300;
-    color: #fff;
-    line-height: 0.92;
-    letter-spacing: -2px;
-    position: relative;
-    margin-bottom: 24px;
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(52px,9vw,110px); font-weight:300;
+    color:#fff; line-height:0.92; letter-spacing:-2px;
+    position:relative; margin-bottom:24px;
+    animation:fadeUp 1s ease 0.4s both;
   }
-
-  .hero h1 em {
-    font-style: italic;
-    color: var(--gold);
-  }
-
+  .hero h1 em { font-style:italic; color:var(--gold); }
   .hero-sub {
-    font-size: 14px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    position: relative;
-    margin-bottom: 60px;
+    font-size:14px; letter-spacing:3px; text-transform:uppercase;
+    color:rgba(255,255,255,0.5); position:relative; margin-bottom:60px;
+    animation:fadeUp 1s ease 0.6s both;
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(30px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* Route line animada */
+  .route-line {
+    position:absolute;
+    top:50%; left:0; right:0;
+    height:1px;
+    background:linear-gradient(to right, transparent, rgba(201,168,76,0.15), transparent);
+    transform:translateY(-50%);
+    pointer-events:none;
   }
 
   .hero-strip {
-    display: flex;
-    gap: 0;
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-    max-width: 900px;
-    width: 100%;
-    height: 200px;
-    box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+    display:flex; gap:4px; position:relative;
+    border-radius:16px; overflow:hidden;
+    max-width:900px; width:100%; height:220px;
+    box-shadow:0 40px 80px rgba(0,0,0,0.5);
+    animation:fadeUp 1s ease 0.8s both;
   }
-
   .hero-strip-item {
-    flex: 1;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    transition: flex 0.4s ease;
-    cursor: default;
+    flex:1; background-size:cover; background-position:center;
+    position:relative; transition:flex 0.5s cubic-bezier(.4,0,.2,1);
+    cursor:pointer;
   }
-
-  .hero-strip-item:hover { flex: 2; }
-
+  .hero-strip-item:hover { flex:2.5; }
+  .hero-strip-item::before {
+    content:'';
+    position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(13,35,64,0.7) 0%, transparent 60%);
+  }
   .hero-strip-item::after {
-    content: attr(data-label);
-    position: absolute;
-    bottom: 12px;
-    left: 12px;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.9);
-    background: rgba(0,0,0,0.4);
-    padding: 4px 10px;
-    border-radius: 20px;
-    backdrop-filter: blur(4px);
+    content:attr(data-label);
+    position:absolute; bottom:14px; left:14px;
+    font-size:10px; letter-spacing:2px; text-transform:uppercase;
+    color:rgba(255,255,255,0.95);
+    background:rgba(0,0,0,0.35);
+    padding:5px 12px; border-radius:20px;
+    backdrop-filter:blur(6px);
+    transition:opacity 0.3s;
   }
+
+  /* Fallback gradient para fotos */
+  .img-panama     { background-image:url('https://panamasovereign.com/wp-content/uploads/casco-viejo-panama-citys-old-quarter11-scaled.webp'), linear-gradient(135deg,#1B4332,#2D6A4F); }
+  .img-costarica  { background-image:url('https://d1cq5bmaro4ubb.cloudfront.net/wp-content/uploads/2025/02/Arenal-Volcano-National-Park-Costa-Rica.jpeg'), linear-gradient(135deg,#1B5E20,#33691E); }
+  .img-tulum      { background-image:url('https://tourtochichenitza.com/assets/tulum-ruins-caribbean-DQCg0bV9.webp'), linear-gradient(135deg,#006064,#00838F); }
+  .img-miami      { background-image:url('https://images.unsplash.com/photo-1533106497176-45ae19e68ba2?w=1200'), linear-gradient(135deg,#0D47A1,#1565C0); }
+  .img-orlando    { background-image:url('https://upload.wikimedia.org/wikipedia/commons/6/6b/Cinderella_Castle%2C_Magic_Kingdom%2C_Walt_Disney_World_%282024%29.jpg'), linear-gradient(135deg,#4A148C,#6A1B9A); }
+  .img-canal      { background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Panama_Canal%2C_Miraflores_locks.jpg/1280px-Panama_Canal%2C_Miraflores_locks.jpg'), linear-gradient(135deg,#004D40,#00695C); }
+  .img-arenal     { background-image:url('https://d1cq5bmaro4ubb.cloudfront.net/wp-content/uploads/2025/02/Arenal-Volcano-National-Park-Costa-Rica.jpeg'), linear-gradient(135deg,#1B5E20,#33691E); }
+  .img-rioceleste { background-image:url('https://mytanfeet.com/wp-content/uploads/2025/03/rio-celeste-waterfall-stairs.jpg'), linear-gradient(135deg,#006064,#0097A7); }
+  .img-monteverde { background-image:url('https://montetours.com/wp-content/uploads/2025/01/Monteverde-Cloud-Forest-1.jpg'), linear-gradient(135deg,#2E7D32,#388E3C); }
+  .img-manuel     { background-image:url('https://d1cq5bmaro4ubb.cloudfront.net/wp-content/uploads/2025/02/Manuel-Antonio-National-Park-Costa-Rica.jpeg'), linear-gradient(135deg,#00695C,#00796B); }
+  .img-chichen    { background-image:url('https://upload.wikimedia.org/wikipedia/commons/5/51/Chichen_Itza_3.jpg'), linear-gradient(135deg,#E65100,#BF360C); }
+  .img-xcaret     { background-image:url('https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1200'), linear-gradient(135deg,#006064,#00838F); }
+  .img-islamujeres{ background-image:url('https://images.unsplash.com/photo-1518638150340-f706e86654de?w=1200'), linear-gradient(135deg,#0277BD,#0288D1); }
+  .img-southbeach { background-image:url('https://images.unsplash.com/photo-1533106497176-45ae19e68ba2?w=1200'), linear-gradient(135deg,#0D47A1,#1565C0); }
+  .img-wynwood    { background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Wynwood_Walls_Miami_2015.jpg/1280px-Wynwood_Walls_Miami_2015.jpg'), linear-gradient(135deg,#880E4F,#AD1457); }
+  .img-sawgrass   { background-image:url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200'), linear-gradient(135deg,#4527A0,#512DA8); }
+  .img-disney     { background-image:url('https://upload.wikimedia.org/wikipedia/commons/6/6b/Cinderella_Castle%2C_Magic_Kingdom%2C_Walt_Disney_World_%282024%29.jpg'), linear-gradient(135deg,#4A148C,#6A1B9A); }
 
   .hero-scroll {
-    position: absolute;
-    bottom: 32px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    color: rgba(255,255,255,0.4);
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
+    position:absolute; bottom:32px; left:50%; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    color:rgba(255,255,255,0.4); font-size:10px; letter-spacing:3px; text-transform:uppercase;
   }
-
   .hero-scroll-line {
-    width: 1px;
-    height: 40px;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
-    animation: scrollPulse 2s ease infinite;
+    width:1px; height:40px;
+    background:linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+    animation:scrollPulse 2s ease infinite;
   }
+  @keyframes scrollPulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
 
-  @keyframes scrollPulse {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 1; }
-  }
-
-  /* ── OVERVIEW TABLE ── */
-  .section {
-    padding: 100px 60px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
+  /* ═══ SECTIONS ═══ */
+  .section { padding:100px 60px; max-width:1100px; margin:0 auto; }
   .section-label {
-    font-size: 10px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--coral);
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    font-size:10px; letter-spacing:4px; text-transform:uppercase;
+    color:var(--coral); margin-bottom:16px;
+    display:flex; align-items:center; gap:12px;
   }
-
   .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: currentColor;
-    opacity: 0.3;
-    max-width: 60px;
+    content:''; flex:1; height:1px;
+    background:currentColor; opacity:0.3; max-width:60px;
   }
-
   .section-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(36px, 5vw, 64px);
-    font-weight: 300;
-    color: var(--navy);
-    line-height: 1;
-    margin-bottom: 48px;
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(36px,5vw,64px); font-weight:300;
+    color:var(--navy); line-height:1; margin-bottom:48px;
   }
+  .section-title em { font-style:italic; color:var(--teal); }
 
-  .section-title em {
-    font-style: italic;
-    color: var(--teal);
-  }
-
-  /* Overview grid */
+  /* ═══ OVERVIEW GRID ═══ */
   .overview-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 2px;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(13,35,64,0.12);
+    display:grid; grid-template-columns:repeat(5,1fr);
+    gap:3px; border-radius:16px; overflow:hidden;
+    box-shadow:0 20px 60px rgba(13,35,64,0.15);
   }
-
   .overview-card {
-    background: var(--navy);
-    padding: 32px 24px;
-    position: relative;
-    overflow: hidden;
+    background:var(--navy); padding:32px 24px;
+    position:relative; overflow:hidden;
+    transition:transform 0.3s ease;
   }
-
+  .overview-card:hover { transform:translateY(-4px); z-index:2; }
   .overview-card::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--gold);
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-    transform-origin: left;
+    content:''; position:absolute; bottom:0; left:0; right:0; height:3px;
+    background:var(--gold); transform:scaleX(0); transition:transform 0.3s ease; transform-origin:left;
   }
-
-  .overview-card:hover::before { transform: scaleX(1); }
-
-  .overview-card .dates {
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .overview-card .dest {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 400;
-    color: #fff;
-    line-height: 1.1;
-    margin-bottom: 10px;
-  }
-
-  .overview-card .nights {
-    font-size: 11px;
-    color: rgba(255,255,255,0.45);
-    margin-bottom: 16px;
-  }
-
-  .overview-card .highlights {
-    list-style: none;
-  }
-
+  .overview-card:hover::before { transform:scaleX(1); }
+  .overview-card .dates { font-size:10px; letter-spacing:2px; color:var(--gold); text-transform:uppercase; margin-bottom:12px; }
+  .overview-card .dest { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:400; color:#fff; margin-bottom:4px; }
+  .overview-card .nights { font-size:11px; color:rgba(255,255,255,0.45); margin-bottom:16px; }
+  .overview-card .highlights { list-style:none; }
   .overview-card .highlights li {
-    font-size: 11px;
-    color: rgba(255,255,255,0.6);
-    padding: 4px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-size:11px; color:rgba(255,255,255,0.6);
+    padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.08);
+    display:flex; align-items:center; gap:8px;
   }
+  .overview-card .highlights li::before { content:'→'; color:var(--coral); flex-shrink:0; }
 
-  .overview-card .highlights li::before {
-    content: '→';
-    color: var(--coral);
-    flex-shrink: 0;
-  }
-
-  /* ── DESTINATION SECTIONS ── */
-  .dest-section {
-    margin: 0;
-    padding: 0;
-  }
-
+  /* ═══ DEST SECTION ═══ */
+  .dest-section { margin:0; padding:0; }
   .dest-hero {
-    height: 70vh;
-    min-height: 500px;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    display: flex;
-    align-items: flex-end;
+    height:75vh; min-height:520px; background-size:cover; background-position:center;
+    position:relative; display:flex; align-items:flex-end;
+    transition:background-position 0.1s ease;
   }
-
   .dest-hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(13,35,64,0.9) 0%, rgba(13,35,64,0.3) 50%, transparent 100%);
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(13,35,64,0.92) 0%, rgba(13,35,64,0.3) 50%, transparent 100%);
   }
-
-  .dest-hero-content {
-    position: relative;
-    padding: 60px;
-    width: 100%;
-    max-width: 900px;
-  }
-
+  .dest-hero-content { position:relative; padding:60px; width:100%; max-width:900px; }
   .dest-hero-tag {
-    display: inline-block;
-    background: var(--coral);
-    color: #fff;
-    font-size: 9px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    padding: 6px 16px;
-    border-radius: 20px;
-    margin-bottom: 20px;
+    display:inline-block; background:var(--coral); color:#fff;
+    font-size:9px; letter-spacing:3px; text-transform:uppercase;
+    padding:6px 16px; border-radius:20px; margin-bottom:20px;
   }
-
   .dest-hero-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(48px, 7vw, 88px);
-    font-weight: 300;
-    color: #fff;
-    line-height: 0.9;
-    letter-spacing: -2px;
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(48px,7vw,88px); font-weight:300;
+    color:#fff; line-height:0.9; letter-spacing:-2px;
+  }
+  .dest-hero-title em { font-style:italic; color:var(--gold); }
+  .dest-hero-subtitle { font-size:14px; color:rgba(255,255,255,0.6); margin-top:12px; letter-spacing:1px; }
+
+  /* VIDEO EMBED */
+  .video-section {
+    background:var(--navy); padding:60px;
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .video-label {
+    font-size:10px; letter-spacing:4px; text-transform:uppercase;
+    color:var(--gold); margin-bottom:20px;
+  }
+  .video-wrapper {
+    width:100%; max-width:900px;
+    border-radius:16px; overflow:hidden;
+    box-shadow:0 30px 80px rgba(0,0,0,0.5);
+    aspect-ratio:16/9;
+    position:relative;
+  }
+  .video-wrapper iframe {
+    width:100%; height:100%; border:none;
+  }
+  .video-caption {
+    margin-top:16px; font-size:12px; color:rgba(255,255,255,0.4);
+    letter-spacing:1px; text-align:center;
   }
 
-  .dest-hero-title em {
-    font-style: italic;
-    color: var(--gold);
-  }
-
-  .dest-hero-subtitle {
-    font-size: 14px;
-    color: rgba(255,255,255,0.6);
-    margin-top: 12px;
-    letter-spacing: 1px;
-  }
-
-  /* Days content */
-  .dest-content {
-    background: var(--cream);
-    padding: 80px 60px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .days-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 32px;
-    margin-top: 40px;
-  }
-
+  /* DAYS GRID */
+  .dest-content { background:var(--cream); padding:80px 60px; max-width:1100px; margin:0 auto; }
+  .days-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:28px; margin-top:40px; }
   .day-card {
-    background: #fff;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 4px 24px rgba(13,35,64,0.07);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background:#fff; border-radius:20px; overflow:hidden;
+    box-shadow:0 4px 24px rgba(13,35,64,0.07);
+    transition:transform 0.3s ease, box-shadow 0.3s ease;
   }
-
-  .day-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 48px rgba(13,35,64,0.14);
-  }
-
-  .day-card-img {
-    height: 200px;
-    background-size: cover;
-    background-position: center;
-  }
-
-  .day-card-body {
-    padding: 28px;
-  }
-
-  .day-card-date {
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--coral);
-    margin-bottom: 8px;
-  }
-
-  .day-card-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 26px;
-    font-weight: 600;
-    color: var(--navy);
-    margin-bottom: 12px;
-    line-height: 1.1;
-  }
-
-  .day-card-desc {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  .day-card-activities {
-    list-style: none;
-    margin-top: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
+  .day-card:hover { transform:translateY(-6px); box-shadow:0 24px 56px rgba(13,35,64,0.15); }
+  .day-card-img { height:200px; background-size:cover; background-position:center; }
+  .day-card-body { padding:28px; }
+  .day-card-date { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--coral); margin-bottom:8px; }
+  .day-card-title { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:600; color:var(--navy); margin-bottom:12px; line-height:1.1; }
+  .day-card-desc { font-size:13px; color:var(--muted); line-height:1.7; }
+  .day-card-activities { list-style:none; margin-top:16px; display:flex; flex-direction:column; gap:8px; }
   .day-card-activities li {
-    font-size: 12px;
-    color: var(--navy);
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 8px 12px;
-    background: var(--sand);
-    border-radius: 8px;
+    font-size:12px; color:var(--navy);
+    display:flex; align-items:flex-start; gap:10px;
+    padding:8px 12px; background:var(--sand); border-radius:8px;
   }
+  .day-card-activities li .icon { font-size:14px; flex-shrink:0; margin-top:1px; }
 
-  .day-card-activities li .icon {
-    font-size: 14px;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  /* ── DIVIDER QUOTE ── */
+  /* ═══ QUOTE ═══ */
   .quote-section {
-    background: var(--navy);
-    padding: 80px 60px;
-    text-align: center;
+    background:var(--navy); padding:90px 60px; text-align:center;
+    position:relative; overflow:hidden;
   }
-
+  .quote-section::before {
+    content:'"'; position:absolute; top:-40px; left:50%; transform:translateX(-50%);
+    font-family:'Cormorant Garamond',serif; font-size:300px; color:rgba(255,255,255,0.03);
+    line-height:1; pointer-events:none;
+  }
   .quote-text {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(24px, 4vw, 48px);
-    font-style: italic;
-    font-weight: 300;
-    color: rgba(255,255,255,0.9);
-    max-width: 800px;
-    margin: 0 auto;
-    line-height: 1.3;
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(24px,4vw,48px); font-style:italic; font-weight:300;
+    color:rgba(255,255,255,0.9); max-width:800px; margin:0 auto; line-height:1.3;
+    position:relative;
   }
+  .quote-text em { color:var(--gold); font-style:normal; }
 
-  .quote-text em {
-    color: var(--gold);
-    font-style: normal;
-  }
-
-  /* ── TIMELINE ── */
-  .timeline {
-    padding: 80px 60px;
-    max-width: 1000px;
-    margin: 0 auto;
-    position: relative;
-  }
-
+  /* ═══ TIMELINE ═══ */
+  .timeline { padding:80px 60px; max-width:1000px; margin:0 auto; position:relative; }
   .timeline::before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 100px;
-    bottom: 80px;
-    width: 1px;
-    background: linear-gradient(to bottom, transparent, var(--teal), transparent);
-    transform: translateX(-50%);
+    content:''; position:absolute; left:50%; top:100px; bottom:80px;
+    width:1px; background:linear-gradient(to bottom, transparent, var(--teal), transparent);
+    transform:translateX(-50%);
   }
-
   .timeline-item {
-    display: grid;
-    grid-template-columns: 1fr 60px 1fr;
-    gap: 0;
-    align-items: center;
-    margin-bottom: 48px;
-    position: relative;
+    display:grid; grid-template-columns:1fr 60px 1fr;
+    gap:0; align-items:center; margin-bottom:48px; position:relative;
   }
-
-  .timeline-item:nth-child(even) .timeline-text {
-    grid-column: 1;
-    grid-row: 1;
-    text-align: right;
-  }
-
-  .timeline-item:nth-child(even) .timeline-dot {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .timeline-item:nth-child(even) .timeline-empty {
-    grid-column: 3;
-    grid-row: 1;
-  }
-
-  .timeline-item:nth-child(odd) .timeline-empty {
-    grid-column: 1;
-  }
-
-  .timeline-item:nth-child(odd) .timeline-dot {
-    grid-column: 2;
-  }
-
-  .timeline-item:nth-child(odd) .timeline-text {
-    grid-column: 3;
-  }
-
+  .timeline-item:nth-child(even) .timeline-text { grid-column:1; grid-row:1; text-align:right; }
+  .timeline-item:nth-child(even) .timeline-dot  { grid-column:2; grid-row:1; }
+  .timeline-item:nth-child(even) .timeline-empty { grid-column:3; grid-row:1; }
+  .timeline-item:nth-child(odd) .timeline-empty { grid-column:1; }
+  .timeline-item:nth-child(odd) .timeline-dot   { grid-column:2; }
+  .timeline-item:nth-child(odd) .timeline-text  { grid-column:3; }
   .timeline-dot {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--navy);
-    border: 3px solid var(--teal);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    justify-self: center;
-    z-index: 1;
-    box-shadow: 0 0 0 8px var(--cream);
+    width:44px; height:44px; border-radius:50%; background:var(--navy);
+    border:3px solid var(--teal); display:flex; align-items:center; justify-content:center;
+    font-size:18px; justify-self:center; z-index:1;
+    box-shadow:0 0 0 8px var(--cream);
+    transition:transform 0.3s ease, box-shadow 0.3s ease;
+    cursor:default;
   }
-
+  .timeline-dot:hover { transform:scale(1.2); box-shadow:0 0 0 8px var(--cream), 0 0 20px rgba(27,107,107,0.4); }
   .timeline-text {
-    padding: 20px 28px;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(13,35,64,0.07);
+    padding:20px 28px; background:#fff; border-radius:16px;
+    box-shadow:0 4px 20px rgba(13,35,64,0.07);
+    transition:box-shadow 0.3s;
   }
+  .timeline-text:hover { box-shadow:0 8px 32px rgba(13,35,64,0.14); }
+  .timeline-text .t-date { font-size:10px; letter-spacing:2px; color:var(--coral); text-transform:uppercase; margin-bottom:6px; }
+  .timeline-text .t-title { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--navy); }
+  .timeline-text .t-nights { font-size:12px; color:var(--teal); margin-top:4px; }
+  .timeline-empty { /* empty col */ }
 
-  .timeline-text .t-date {
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--coral);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .timeline-text .t-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--navy);
-  }
-
-  .timeline-text .t-nights {
-    font-size: 12px;
-    color: var(--teal);
-    margin-top: 4px;
-  }
-
-  .timeline-empty {
-    /* empty col */
-  }
-
-  /* ── CTA FINAL ── */
+  /* ═══ CTA FINAL ═══ */
   .cta-section {
-    min-height: 80vh;
-    background:
+    min-height:80vh; background:
       radial-gradient(ellipse 100% 80% at 10% 90%, rgba(27,107,107,0.4) 0%, transparent 50%),
       radial-gradient(ellipse 70% 60% at 90% 10%, rgba(201,168,76,0.25) 0%, transparent 50%),
       var(--navy);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 100px 40px;
-    position: relative;
-    overflow: hidden;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:100px 40px; position:relative; overflow:hidden;
   }
-
   .cta-section::after {
-    content: '2027';
-    position: absolute;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 320px;
-    font-weight: 700;
-    color: rgba(255,255,255,0.03);
-    letter-spacing: -20px;
-    pointer-events: none;
-    bottom: -60px;
-    left: 50%;
-    transform: translateX(-50%);
+    content:'2027'; position:absolute;
+    font-family:'Cormorant Garamond',serif; font-size:320px; font-weight:700;
+    color:rgba(255,255,255,0.03); letter-spacing:-20px; pointer-events:none;
+    bottom:-60px; left:50%; transform:translateX(-50%);
   }
-
-  .cta-pre {
-    font-size: 11px;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 24px;
-  }
-
+  .cta-pre { font-size:11px; letter-spacing:5px; text-transform:uppercase; color:var(--gold); margin-bottom:24px; }
   .cta-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(52px, 9vw, 120px);
-    font-weight: 300;
-    color: #fff;
-    line-height: 0.88;
-    letter-spacing: -3px;
-    margin-bottom: 32px;
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(52px,9vw,120px); font-weight:300;
+    color:#fff; line-height:0.88; letter-spacing:-3px; margin-bottom:32px;
   }
-
-  .cta-title em {
-    font-style: italic;
-    color: var(--gold);
-  }
-
-  .cta-sub {
-    font-size: 16px;
-    color: rgba(255,255,255,0.55);
-    max-width: 560px;
-    line-height: 1.7;
-    margin-bottom: 52px;
-  }
-
+  .cta-title em { font-style:italic; color:var(--gold); }
+  .cta-sub { font-size:16px; color:rgba(255,255,255,0.55); max-width:560px; line-height:1.7; margin-bottom:52px; }
   .cta-btn {
-    display: inline-block;
-    background: var(--coral);
-    color: #fff;
-    font-size: 12px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    padding: 20px 52px;
-    border-radius: 50px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 20px 48px rgba(224,90,58,0.35);
+    display:inline-block; background:var(--coral); color:#fff;
+    font-size:12px; letter-spacing:3px; text-transform:uppercase;
+    padding:20px 52px; border-radius:50px; text-decoration:none;
+    transition:all 0.3s ease; box-shadow:0 20px 48px rgba(224,90,58,0.35);
   }
+  .cta-btn:hover { background:#fff; color:var(--coral); transform:translateY(-3px); box-shadow:0 28px 64px rgba(255,255,255,0.2); }
+  .cta-stats { display:flex; gap:60px; margin-top:72px; position:relative; flex-wrap:wrap; justify-content:center; }
+  .cta-stat .num { font-family:'Cormorant Garamond',serif; font-size:52px; font-weight:300; color:#fff; line-height:1; }
+  .cta-stat .num em { font-style:italic; color:var(--gold); font-size:36px; }
+  .cta-stat .lbl { font-size:10px; letter-spacing:3px; color:rgba(255,255,255,0.4); text-transform:uppercase; margin-top:8px; }
 
-  .cta-btn:hover {
-    background: #fff;
-    color: var(--coral);
-    box-shadow: 0 24px 60px rgba(255,255,255,0.2);
-    transform: translateY(-2px);
-  }
+  /* ═══ SCROLL REVEAL ═══ */
+  .reveal { opacity:0; transform:translateY(40px); transition:opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
 
-  .cta-stats {
-    display: flex;
-    gap: 60px;
-    margin-top: 72px;
-    position: relative;
-  }
-
-  .cta-stat .num {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 52px;
-    font-weight: 300;
-    color: #fff;
-    line-height: 1;
-  }
-
-  .cta-stat .num em {
-    font-style: italic;
-    color: var(--gold);
-    font-size: 36px;
-  }
-
-  .cta-stat .lbl {
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: rgba(255,255,255,0.4);
-    text-transform: uppercase;
-    margin-top: 8px;
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 768px) {
-    .section { padding: 60px 24px; }
-    .dest-content { padding: 60px 24px; }
-    .dest-hero-content { padding: 40px 24px; }
-    .overview-grid { grid-template-columns: 1fr 1fr; }
-    .timeline { padding: 60px 24px; }
-    .timeline::before { left: 28px; }
-    .timeline-item { grid-template-columns: 56px 1fr; }
-    .timeline-item .timeline-empty { display: none; }
+  /* ═══ RESPONSIVE ═══ */
+  @media(max-width:768px){
+    .section { padding:60px 24px; }
+    .dest-content { padding:60px 24px; }
+    .dest-hero-content { padding:40px 24px; }
+    .overview-grid { grid-template-columns:1fr 1fr; }
+    .timeline { padding:60px 24px; }
+    .timeline::before { left:28px; }
+    .timeline-item { grid-template-columns:56px 1fr; }
+    .timeline-item .timeline-empty { display:none; }
     .timeline-item:nth-child(even) .timeline-text,
-    .timeline-item:nth-child(odd) .timeline-text { grid-column: 2; text-align: left; }
+    .timeline-item:nth-child(odd) .timeline-text { grid-column:2; text-align:left; }
     .timeline-item:nth-child(even) .timeline-dot,
-    .timeline-item:nth-child(odd) .timeline-dot { grid-column: 1; }
-    .cta-stats { gap: 32px; flex-wrap: wrap; justify-content: center; }
-    .quote-section { padding: 60px 24px; }
-    .cta-section { padding: 80px 24px; }
+    .timeline-item:nth-child(odd) .timeline-dot   { grid-column:1; }
+    .cta-stats { gap:32px; }
+    .quote-section { padding:60px 24px; }
+    .cta-section { padding:80px 24px; }
+    .video-section { padding:40px 20px; }
+    .plane { display:none; }
   }
 </style>
 </head>
 <body>
 
-<!-- ══════════ HERO ══════════ -->
+<!-- ═══ AVIONES VOLANDO ═══ -->
+<div class="sky-canvas" id="skyCanvas"></div>
+
+<!-- ═══ HERO ═══ -->
 <section class="hero">
-  <div class="hero-badge">Enero — Febrero 2027</div>
+  <div class="hero-bg-layers"></div>
+  <div class="stars" id="stars"></div>
+  <div class="route-line"></div>
+
+  <div class="hero-badge">✈ Enero — Febrero 2027 ✈</div>
   <h1>Caribe<br><em>&amp; Florida</em></h1>
   <p class="hero-sub">Un viaje diseñado para no olvidar jamás</p>
 
   <div class="hero-strip">
-    <div class="hero-strip-item"
-         style="background-image:url('https://panamasovereign.com/wp-content/uploads/casco-viejo-panama-citys-old-quarter11-scaled.webp')"
-         data-label="Panamá"></div>
-    <div class="hero-strip-item"
-         style="background-image:url('https://d1cq5bmaro4ubb.cloudfront.net/wp-content/uploads/2025/02/Arenal-Volcano-National-Park-Costa-Rica.jpeg')"
-         data-label="Costa Rica"></div>
-    <div class="hero-strip-item"
-         style="background-image:url('https://tourtochichenitza.com/assets/tulum-ruins-caribbean-DQCg0bV9.webp')"
-         data-label="Riviera Maya"></div>
-    <div class="hero-strip-item"
-         style="background-image:url('https://cdn.skyrisecities.com/sites/default/files/images/articles/2016/05/21118/21118-72464.jpg')"
-         data-label="Miami"></div>
-    <div class="hero-strip-item"
-         style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/6/6b/Cinderella_Castle%2C_Magic_Kingdom%2C_Walt_Disney_World_%282024%29.jpg')"
-         data-label="Orlando"></div>
+    <div class="hero-strip-item img-panama"     data-label="🇵🇦 Panamá"></div>
+    <div class="hero-strip-item img-costarica"  data-label="🇨🇷 Costa Rica"></div>
+    <div class="hero-strip-item img-tulum"      data-label="🇲🇽 Riviera Maya"></div>
+    <div class="hero-strip-item img-southbeach" data-label="🇺🇸 Miami"></div>
+    <div class="hero-strip-item img-disney"     data-label="🏰 Orlando"></div>
   </div>
 
   <div class="hero-scroll">
@@ -712,11 +440,10 @@
 </section>
 
 
-<!-- ══════════ OVERVIEW ══════════ -->
-<div class="section">
+<!-- ═══ OVERVIEW ═══ -->
+<div class="section reveal">
   <div class="section-label">El viaje completo</div>
   <h2 class="section-title">23 días,<br>5 destinos,<br><em>infinitas historias</em></h2>
-
   <div class="overview-grid">
     <div class="overview-card">
       <div class="dates">10–12 Ene</div>
@@ -744,7 +471,7 @@
       <div class="dest">Riviera Maya</div>
       <div class="nights">7 noches</div>
       <ul class="highlights">
-        <li>Tulum & ruinas mayas</li>
+        <li>Tulum sobre el mar</li>
         <li>Chichén Itzá</li>
         <li>Xcaret & cenotes</li>
         <li>Isla Mujeres</li>
@@ -774,10 +501,9 @@
 </div>
 
 
-<!-- ══════════ DESTINO 1: PANAMÁ ══════════ -->
+<!-- ═══ DESTINO 1: PANAMÁ ═══ -->
 <div class="dest-section">
-  <div class="dest-hero"
-       style="background-image:url('https://panamasovereign.com/wp-content/uploads/casco-viejo-panama-citys-old-quarter11-scaled.webp')">
+  <div class="dest-hero img-panama">
     <div class="dest-hero-content">
       <div class="dest-hero-tag">10 al 12 de Enero · 2 noches</div>
       <h2 class="dest-hero-title">Panamá<br><em>Histórico</em></h2>
@@ -785,35 +511,41 @@
     </div>
   </div>
 
+  <!-- VIDEO PANAMÁ -->
+  <div class="video-section">
+    <div class="video-label">🎬 Mirá Panamá antes de llegar</div>
+    <div class="video-wrapper">
+      <iframe src="https://www.youtube.com/embed/tpDyJA7OQUA?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="Panamá travel video"></iframe>
+    </div>
+    <p class="video-caption">Panamá City — Casco Viejo & Canal de Panamá</p>
+  </div>
+
   <div class="dest-content">
     <div class="section-label">El cruce del mundo</div>
     <div class="days-grid">
-      <div class="day-card">
-        <div class="day-card-img"
-             style="background-image:url('https://panamasovereign.com/wp-content/uploads/casco-viejo-panama-citys-old-quarter11-scaled.webp')"></div>
+      <div class="day-card reveal">
+        <div class="day-card-img img-panama"></div>
         <div class="day-card-body">
           <div class="day-card-date">Día 1 — 10 de Enero</div>
           <div class="day-card-title">Casco Viejo</div>
-          <p class="day-card-desc">Llegada, check-in y primera noche en el barrio colonial más fotogénico de Centroamérica.</p>
+          <p class="day-card-desc">El barrio colonial más fotogénico de Centroamérica. Calles de piedra, colores vibrantes y rooftops con vista al skyline.</p>
           <ul class="day-card-activities">
-            <li><span class="icon">🏛️</span> Caminata por calles coloniales</li>
-            <li><span class="icon">🌆</span> Rooftop con vista al skyline moderno</li>
+            <li><span class="icon">🏛️</span> Caminata colonial</li>
+            <li><span class="icon">🌆</span> Rooftop con vista al skyline</li>
             <li><span class="icon">🍷</span> Cena con vista al mar</li>
           </ul>
         </div>
       </div>
-
-      <div class="day-card">
-        <div class="day-card-img"
-             style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Panama_Canal%2C_Miraflores_locks.jpg/1280px-Panama_Canal%2C_Miraflores_locks.jpg')"></div>
+      <div class="day-card reveal">
+        <div class="day-card-img img-canal"></div>
         <div class="day-card-body">
           <div class="day-card-date">Día 2 — 11 de Enero</div>
           <div class="day-card-title">Canal de Panamá</div>
-          <p class="day-card-desc">La obra de ingeniería más impresionante del siglo XX. Ver pasar barcos gigantes es una experiencia que no se olvida.</p>
+          <p class="day-card-desc">La obra de ingeniería más asombrosa del siglo XX. Ver barcos gigantes pasar entre dos océanos es única en la vida.</p>
           <ul class="day-card-activities">
             <li><span class="icon">⚓</span> Esclusas de Miraflores</li>
             <li><span class="icon">🎨</span> Biomuseo de Frank Gehry</li>
-            <li><span class="icon">🏖️</span> Tarde de relax en la playa</li>
+            <li><span class="icon">🏖️</span> Relax en la playa</li>
           </ul>
         </div>
       </div>
@@ -822,10 +554,9 @@
 </div>
 
 
-<!-- ══════════ DESTINO 2: COSTA RICA ══════════ -->
+<!-- ═══ DESTINO 2: COSTA RICA ═══ -->
 <div class="dest-section">
-  <div class="dest-hero"
-       style="background-image:url('https://d1cq5bmaro4ubb.cloudfront.net/wp-content/uploads/2025/02/Arenal-Volcano-National-Park-Costa-Rica.jpeg')">
+  <div class="dest-hero img-arenal">
     <div class="dest-hero-content">
       <div class="dest-hero-tag">12 al 19 de Enero · 7 noches</div>
       <h2 class="dest-hero-title">Costa Rica:<br><em>Pura Vida</em></h2>
@@ -833,65 +564,66 @@
     </div>
   </div>
 
+  <!-- VIDEO COSTA RICA -->
+  <div class="video-section">
+    <div class="video-label">🎬 Costa Rica te está esperando</div>
+    <div class="video-wrapper">
+      <iframe src="https://www.youtube.com/embed/bMFkCiYIRuE?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="Costa Rica travel video"></iframe>
+    </div>
+    <p class="video-caption">Costa Rica — Volcán Arenal, Monteverde & Playas del Pacífico</p>
+  </div>
+
   <div class="dest-content">
     <div class="section-label">La naturaleza en estado puro</div>
     <div class="days-grid">
-      <div class="day-card">
-        <div class="day-card-img"
-             style="background-image:url('https://d1cq5bmaro4ubb.cloudfront.net/wp-content/uploads/2025/02/Arenal-Volcano-National-Park-Costa-Rica.jpeg')"></div>
+      <div class="day-card reveal">
+        <div class="day-card-img img-arenal"></div>
         <div class="day-card-body">
           <div class="day-card-date">12–15 Ene · La Fortuna</div>
           <div class="day-card-title">Volcán Arenal</div>
-          <p class="day-card-desc">Uno de los volcanes más activos de Centroamérica, rodeado de selva húmeda tropical y aguas termales naturales.</p>
+          <p class="day-card-desc">Volcán activo rodeado de selva húmeda. Termales naturales calentadas por el magma y puentes colgantes sobre el dosel.</p>
           <ul class="day-card-activities">
-            <li><span class="icon">🌋</span> Contemplación del Volcán Arenal</li>
-            <li><span class="icon">♨️</span> Baño nocturno en termales volcánicas</li>
-            <li><span class="icon">🌿</span> Senderismo & puentes colgantes</li>
-            <li><span class="icon">🪂</span> Canopy & tirolinas en la selva</li>
+            <li><span class="icon">🌋</span> Contemplación del volcán</li>
+            <li><span class="icon">♨️</span> Baño en termales volcánicas</li>
+            <li><span class="icon">🌿</span> Canopy & puentes colgantes</li>
           </ul>
         </div>
       </div>
-
-      <div class="day-card">
-        <div class="day-card-img"
-             style="background-image:url('https://mytanfeet.com/wp-content/uploads/2025/03/rio-celeste-waterfall-stairs.jpg')"></div>
+      <div class="day-card reveal">
+        <div class="day-card-img img-rioceleste"></div>
         <div class="day-card-body">
           <div class="day-card-date">15 Ene · Excursión</div>
           <div class="day-card-title">Río Celeste</div>
-          <p class="day-card-desc">Aguas de un turquesa irreal, creado por una reacción química natural de minerales. Un regalo de la naturaleza.</p>
+          <p class="day-card-desc">Aguas de un turquesa sobrenatural creadas por una reacción química de minerales volcánicos. Un espectáculo irreal.</p>
           <ul class="day-card-activities">
-            <li><span class="icon">💧</span> Parque Nacional Volcán Tenorio</li>
-            <li><span class="icon">📸</span> Cascada y pozos celestes</li>
-            <li><span class="icon">🦜</span> Avistamiento de fauna tropical</li>
+            <li><span class="icon">💧</span> Parque Volcán Tenorio</li>
+            <li><span class="icon">📸</span> Cascada & pozos celestes</li>
+            <li><span class="icon">🦜</span> Fauna tropical</li>
           </ul>
         </div>
       </div>
-
-      <div class="day-card">
-        <div class="day-card-img"
-             style="background-image:url('https://montetours.com/wp-content/uploads/2025/01/Monteverde-Cloud-Forest-1.jpg')"></div>
+      <div class="day-card reveal">
+        <div class="day-card-img img-monteverde"></div>
         <div class="day-card-body">
           <div class="day-card-date">16 Ene · Aventura</div>
           <div class="day-card-title">Monteverde</div>
-          <p class="day-card-desc">El bosque nuboso más famoso del mundo, donde la bruma eterna abraza cada árbol y cada puente colgante.</p>
+          <p class="day-card-desc">El bosque nuboso más famoso del planeta. La bruma abraza cada árbol gigante mientras cruzás puentes suspendidos en el aire.</p>
           <ul class="day-card-activities">
-            <li><span class="icon">🌁</span> Cruce de puentes colgantes gigantes</li>
-            <li><span class="icon">🦋</span> Reserva biológica de Monteverde</li>
-            <li><span class="icon">⚡</span> Tirolina de adrenalina pura</li>
+            <li><span class="icon">🌁</span> Puentes colgantes gigantes</li>
+            <li><span class="icon">🦋</span> Reserva biológica</li>
+            <li><span class="icon">⚡</span> Tirolina de adrenalina</li>
           </ul>
         </div>
       </div>
-
-      <div class="day-card">
-        <div class="day-card-img"
-             style="background-image:url('https://d1cq5bmaro4ubb.cloudfront.net/wp-content/uploads/2025/02/Manuel-Antonio-National-Park-Costa-Rica.jpeg')"></div>
+      <div class="day-card reveal">
+        <div class="day-card-img img-manuel"></div>
         <div class="day-card-body">
           <div class="day-card-date">17–18 Ene · Playa</div>
           <div class="day-card-title">Playas del Pacífico</div>
-          <p class="day-card-desc">Donde la selva tropical baja directamente al mar. Atardeceres dorados, mariscos frescos y olas perfectas.</p>
+          <p class="day-card-desc">La selva tropical baja directo al mar. Atardeceres dorados únicos, surf, mariscos frescos y vida de playa auténtica.</p>
           <ul class="day-card-activities">
             <li><span class="icon">🏝️</span> Manuel Antonio National Park</li>
-            <li><span class="icon">🌊</span> Surf o kayak en aguas tibias</li>
+            <li><span class="icon">🌊</span> Surf o kayak</li>
             <li><span class="icon">🦀</span> Cena de mariscos frente al mar</li>
           </ul>
         </div>
@@ -901,83 +633,84 @@
 </div>
 
 
-<!-- ══════════ QUOTE ══════════ -->
-<div class="quote-section">
+<!-- ═══ QUOTE ═══ -->
+<div class="quote-section reveal">
   <p class="quote-text">
     "El Caribe no es un destino.<br>Es un <em>estado de ánimo</em>."
   </p>
 </div>
 
 
-<!-- ══════════ DESTINO 3: RIVIERA MAYA ══════════ -->
+<!-- ═══ DESTINO 3: RIVIERA MAYA ═══ -->
 <div class="dest-section">
-  <div class="dest-hero"
-       style="background-image:url('https://tourtochichenitza.com/assets/tulum-ruins-caribbean-DQCg0bV9.webp')">
+  <div class="dest-hero img-tulum">
     <div class="dest-hero-content">
-      <div class="dest-hero-tag">19 al 26 de Enero · 7 noches</div>
+      <div class="dest-hero-tag">19 al 26 de Enero · 7 noches · Playa del Carmen</div>
       <h2 class="dest-hero-title">Riviera<br><em>Maya</em></h2>
       <p class="dest-hero-subtitle">Mil años de historia maya bajo el sol del Caribe</p>
     </div>
   </div>
 
+  <!-- VIDEO RIVIERA MAYA -->
+  <div class="video-section">
+    <div class="video-label">🎬 La Riviera Maya te va a dejar sin palabras</div>
+    <div class="video-wrapper">
+      <iframe src="https://www.youtube.com/embed/1VkRrMfBwYk?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="Riviera Maya travel video"></iframe>
+    </div>
+    <p class="video-caption">Tulum · Chichén Itzá · Xcaret · Isla Mujeres · Cenotes</p>
+  </div>
+
   <div class="dest-content">
     <div class="section-label">Cenotes, ruinas y Caribe turquesa</div>
     <div class="days-grid">
-      <div class="day-card">
-        <div class="day-card-img"
-             style="background-image:url('https://tourtochichenitza.com/assets/tulum-ruins-caribbean-DQCg0bV9.webp')"></div>
+      <div class="day-card reveal">
+        <div class="day-card-img img-tulum"></div>
         <div class="day-card-body">
-          <div class="day-card-date">19–21 Ene · Playa del Carmen</div>
+          <div class="day-card-date">19–21 Ene</div>
           <div class="day-card-title">Tulum</div>
-          <p class="day-card-desc">El único sitio arqueológico maya frente al Caribe. Ruinas de mil años sobre acantilados bañados por turquesa.</p>
+          <p class="day-card-desc">El único yacimiento maya frente al mar Caribe. Ruinas de mil años sobre acantilados bañados de turquesa.</p>
           <ul class="day-card-activities">
-            <li><span class="icon">🏛️</span> Ruinas de Tulum sobre el acantilado</li>
-            <li><span class="icon">🏖️</span> Playa Paraíso (top 10 mundial)</li>
+            <li><span class="icon">🏛️</span> Ruinas sobre el acantilado</li>
+            <li><span class="icon">🏖️</span> Playa Paraíso (top mundial)</li>
             <li><span class="icon">🛍️</span> La Quinta Avenida de noche</li>
           </ul>
         </div>
       </div>
-
-      <div class="day-card">
-        <div class="day-card-img"
-             style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/5/51/Chichen_Itza_3.jpg')"></div>
+      <div class="day-card reveal">
+        <div class="day-card-img img-chichen"></div>
         <div class="day-card-body">
           <div class="day-card-date">22 Ene</div>
           <div class="day-card-title">Chichén Itzá</div>
-          <p class="day-card-desc">Maravilla del Mundo Moderno. La Pirámide de Kukulcán es una de las obras más perfectas de la humanidad.</p>
+          <p class="day-card-desc">Maravilla del Mundo Moderno. La Pirámide de Kukulcán, una obra de perfección matemática que quita el aliento.</p>
           <ul class="day-card-activities">
-            <li><span class="icon">🔱</span> Pirámide de Kukulcán guiada</li>
-            <li><span class="icon">💦</span> Baño en el Cenote Ik Kil</li>
+            <li><span class="icon">🔱</span> Pirámide de Kukulcán</li>
+            <li><span class="icon">💦</span> Cenote Ik Kil</li>
             <li><span class="icon">🌮</span> Almuerzo en hacienda colonial</li>
           </ul>
         </div>
       </div>
-
-      <div class="day-card">
-        <div class="day-card-img"
-             style="background-image:url('https://www.xcaret.com/assets/xcaret/sliders/es/actividades/mobile/sliders-xc-riossub04.jpg')"></div>
+      <div class="day-card reveal">
+        <div class="day-card-img img-xcaret"></div>
         <div class="day-card-body">
           <div class="day-card-date">21 & 23 Ene</div>
           <div class="day-card-title">Xcaret & Cenotes</div>
-          <p class="day-card-desc">Ríos subterráneos cristalinos, snorkel ilimitado y el show folclórico más aclamado de México bajo las estrellas.</p>
+          <p class="day-card-desc">Ríos subterráneos cristalinos, snorkel ilimitado y el show folclórico más aclamado de México.</p>
           <ul class="day-card-activities">
             <li><span class="icon">🤿</span> Snorkel en ríos subterráneos</li>
-            <li><span class="icon">🐠</span> Arrecife de coral en caletas privadas</li>
-            <li><span class="icon">💃</span> Show nocturno de México Espectacular</li>
+            <li><span class="icon">🐠</span> Arrecife en caletas privadas</li>
+            <li><span class="icon">💃</span> Show nocturno México Espectacular</li>
           </ul>
         </div>
       </div>
-
-      <div class="day-card">
-        <div class="day-card-img"
-             style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Isla_Mujeres_1.jpg/1280px-Isla_Mujeres_1.jpg')"></div>
+      <div class="day-card reveal">
+        <div class="day-card-img img-islamujeres"></div>
         <div class="day-card-body">
           <div class="day-card-date">24 Ene</div>
           <div class="day-card-title">Isla Mujeres</div>
-          <p class="day-card-desc">La joya del Caribe mexicano. Catamarán privado, snorkel con peces tropicales y el mar más turquesa que vas a ver en tu vida.</p>
+          <p class="day-card-desc">La joya del Caribe mexicano. Catamarán, snorkel con peces tropicales y el mar más turquesa de tu vida.</p>
           <ul class="day-card-activities">
             <li><span class="icon">⛵</span> Catamarán con barra libre</li>
-            <li><span class="icon">🐡</span> Snorkel con peces de colores</li>
+            <li><span class="icon">🐡</span> Snorkel en arrecifes</li>
             <li><span class="icon">🍹</span> Playa & mojitos al sol</li>
           </ul>
         </div>
@@ -987,10 +720,9 @@
 </div>
 
 
-<!-- ══════════ DESTINO 4+5: MIAMI & ORLANDO ══════════ -->
+<!-- ═══ DESTINO 4+5: MIAMI & ORLANDO ═══ -->
 <div class="dest-section">
-  <div class="dest-hero"
-       style="background-image:url('https://cdn.skyrisecities.com/sites/default/files/images/articles/2016/05/21118/21118-72464.jpg')">
+  <div class="dest-hero img-southbeach">
     <div class="dest-hero-content">
       <div class="dest-hero-tag">26 Ene – 1 Feb · 6 noches</div>
       <h2 class="dest-hero-title">Miami<br><em>&amp; Orlando</em></h2>
@@ -998,31 +730,37 @@
     </div>
   </div>
 
+  <!-- VIDEO MIAMI -->
+  <div class="video-section">
+    <div class="video-label">🎬 Miami & Orlando — el broche de oro</div>
+    <div class="video-wrapper">
+      <iframe src="https://www.youtube.com/embed/HAEdBsVKiAo?rel=0&modestbranding=1" allowfullscreen loading="lazy" title="Miami travel video"></iframe>
+    </div>
+    <p class="video-caption">Miami · South Beach · Wynwood · Orlando · Disney · Universal</p>
+  </div>
+
   <div class="dest-content">
     <div class="section-label">El gran final americano</div>
     <div class="days-grid">
-      <div class="day-card">
-        <div class="day-card-img"
-             style="background-image:url('https://cdn.skyrisecities.com/sites/default/files/images/articles/2016/05/21118/21118-72464.jpg')"></div>
+      <div class="day-card reveal">
+        <div class="day-card-img img-southbeach"></div>
         <div class="day-card-body">
           <div class="day-card-date">26 Ene — Miami</div>
           <div class="day-card-title">South Beach & Art Deco</div>
-          <p class="day-card-desc">Check-in en South Beach y bienvenida a la ciudad más cool de los States. Ocean Drive de noche es otro mundo.</p>
+          <p class="day-card-desc">La ciudad más cool de los States. Ocean Drive de noche, neones retro y la energía única de South Beach.</p>
           <ul class="day-card-activities">
             <li><span class="icon">🌊</span> South Beach al amanecer</li>
-            <li><span class="icon">🏛️</span> Paseo por Ocean Drive Art Deco</li>
+            <li><span class="icon">🏛️</span> Ocean Drive Art Deco</li>
             <li><span class="icon">🌙</span> Noche en Brickell</li>
           </ul>
         </div>
       </div>
-
-      <div class="day-card">
-        <div class="day-card-img"
-             style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Wynwood_Walls_Miami_2015.jpg/1280px-Wynwood_Walls_Miami_2015.jpg')"></div>
+      <div class="day-card reveal">
+        <div class="day-card-img img-wynwood"></div>
         <div class="day-card-body">
           <div class="day-card-date">27 Ene — Miami</div>
           <div class="day-card-title">Wynwood & Compras</div>
-          <p class="day-card-desc">El barrio de arte urbano más instagrameable del planeta. Murales de grandes artistas y galerías de vanguardia.</p>
+          <p class="day-card-desc">El barrio de arte urbano más instagrameable del planeta. Murales monumentales y galerías de vanguardia.</p>
           <ul class="day-card-activities">
             <li><span class="icon">🎨</span> Wynwood Walls murales</li>
             <li><span class="icon">🛍️</span> Lincoln Road shopping</li>
@@ -1030,34 +768,29 @@
           </ul>
         </div>
       </div>
-
-      <div class="day-card">
-        <div class="day-card-img"
-             style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Sawgrass_Mills_Mall.jpg/1280px-Sawgrass_Mills_Mall.jpg')"></div>
+      <div class="day-card reveal">
+        <div class="day-card-img img-sawgrass"></div>
         <div class="day-card-body">
           <div class="day-card-date">28 Ene — Miami</div>
           <div class="day-card-title">Sawgrass Mills</div>
-          <p class="day-card-desc">El outlet premium más grande del mundo. Marcas internacionales con descuentos de hasta el 70%. Un día de shopping legendario.</p>
+          <p class="day-card-desc">El outlet premium más grande del mundo. 350+ tiendas con descuentos de hasta el 70%. Shopping legendario.</p>
           <ul class="day-card-activities">
             <li><span class="icon">👟</span> 350+ tiendas premium</li>
-            <li><span class="icon">💰</span> Descuentos de hasta 70%</li>
-            <li><span class="icon">🧳</span> Tiempo libre para llenar las valijas</li>
+            <li><span class="icon">💰</span> Descuentos hasta 70%</li>
+            <li><span class="icon">🧳</span> Valijas llenas garantizadas</li>
           </ul>
         </div>
       </div>
-
-      <div class="day-card">
-        <div class="day-card-img"
-             style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/6/6b/Cinderella_Castle%2C_Magic_Kingdom%2C_Walt_Disney_World_%282024%29.jpg')"></div>
+      <div class="day-card reveal">
+        <div class="day-card-img img-disney"></div>
         <div class="day-card-body">
           <div class="day-card-date">29 Ene–1 Feb — Orlando</div>
           <div class="day-card-title">Disney & Universal</div>
-          <p class="day-card-desc">Donde los sueños se hacen realidad. Magic Kingdom, los mejores fuegos del planeta y la adrenalina de Universal Studios.</p>
+          <p class="day-card-desc">Donde los sueños se hacen realidad. Magic Kingdom con los mejores fuegos del mundo y la adrenalina de Universal.</p>
           <ul class="day-card-activities">
             <li><span class="icon">🏰</span> Magic Kingdom día completo</li>
             <li><span class="icon">🎢</span> EPCOT o Hollywood Studios</li>
             <li><span class="icon">⚡</span> Universal Studios & Harry Potter</li>
-            <li><span class="icon">✈️</span> 1 Feb: vuelo de regreso a Buenos Aires</li>
           </ul>
         </div>
       </div>
@@ -1066,13 +799,12 @@
 </div>
 
 
-<!-- ══════════ TIMELINE ══════════ -->
+<!-- ═══ TIMELINE ═══ -->
 <div class="section">
   <div class="section-label">Cronograma</div>
   <h2 class="section-title">El viaje<br><em>día a día</em></h2>
-
   <div class="timeline">
-    <div class="timeline-item">
+    <div class="timeline-item reveal">
       <div class="timeline-empty"></div>
       <div class="timeline-dot">✈️</div>
       <div class="timeline-text">
@@ -1081,8 +813,8 @@
         <div class="t-nights">Vuelo de salida 🛫</div>
       </div>
     </div>
-    <div class="timeline-item">
-      <div class="timeline-text" style="text-align:right">
+    <div class="timeline-item reveal">
+      <div class="timeline-text">
         <div class="t-date">10–12 Ene</div>
         <div class="t-title">Panamá Histórico</div>
         <div class="t-nights">2 noches · Canal & Casco Viejo</div>
@@ -1090,7 +822,7 @@
       <div class="timeline-dot">🏛️</div>
       <div class="timeline-empty"></div>
     </div>
-    <div class="timeline-item">
+    <div class="timeline-item reveal">
       <div class="timeline-empty"></div>
       <div class="timeline-dot">🌋</div>
       <div class="timeline-text">
@@ -1099,8 +831,8 @@
         <div class="t-nights">7 noches · Arenal · Río Celeste · Monteverde · Playas</div>
       </div>
     </div>
-    <div class="timeline-item">
-      <div class="timeline-text" style="text-align:right">
+    <div class="timeline-item reveal">
+      <div class="timeline-text">
         <div class="t-date">19–26 Ene</div>
         <div class="t-title">Riviera Maya</div>
         <div class="t-nights">7 noches · Tulum · Chichén · Xcaret · Isla Mujeres</div>
@@ -1108,7 +840,7 @@
       <div class="timeline-dot">🔱</div>
       <div class="timeline-empty"></div>
     </div>
-    <div class="timeline-item">
+    <div class="timeline-item reveal">
       <div class="timeline-empty"></div>
       <div class="timeline-dot">🌆</div>
       <div class="timeline-text">
@@ -1117,8 +849,8 @@
         <div class="t-nights">3 noches · South Beach · Wynwood · Sawgrass</div>
       </div>
     </div>
-    <div class="timeline-item">
-      <div class="timeline-text" style="text-align:right">
+    <div class="timeline-item reveal">
+      <div class="timeline-text">
         <div class="t-date">29 Ene–1 Feb</div>
         <div class="t-title">Disney & Orlando</div>
         <div class="t-nights">3 noches · Magic Kingdom · EPCOT · Universal</div>
@@ -1126,7 +858,7 @@
       <div class="timeline-dot">🏰</div>
       <div class="timeline-empty"></div>
     </div>
-    <div class="timeline-item">
+    <div class="timeline-item reveal">
       <div class="timeline-empty"></div>
       <div class="timeline-dot">🏠</div>
       <div class="timeline-text">
@@ -1139,18 +871,17 @@
 </div>
 
 
-<!-- ══════════ CTA FINAL ══════════ -->
+<!-- ═══ CTA FINAL ═══ -->
 <section class="cta-section">
-  <div class="cta-pre">Enero / Febrero 2027</div>
+  <div class="cta-pre">✈ Enero / Febrero 2027 ✈</div>
   <h2 class="cta-title">¿Listos para<br>decir que <em>SÍ</em>?</h2>
   <p class="cta-sub">
     Viajar es la única cosa que comprás y te hace más rico.
     Este itinerario combina la mística maya, la selva más pura
     de América, el glamour de Miami y la magia de Disney.
-    Todo en un solo viaje.
+    Todo en un solo viaje épico.
   </p>
-  <a href="#" class="cta-btn">Hagamos las valijas</a>
-
+  <a href="#" class="cta-btn">✈ Hagamos las valijas</a>
   <div class="cta-stats">
     <div class="cta-stat">
       <div class="num">23<em>d</em></div>
@@ -1171,5 +902,85 @@
   </div>
 </section>
 
+
+<script>
+/* ─── ESTRELLAS ─── */
+const starsEl = document.getElementById('stars');
+for (let i = 0; i < 120; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  s.style.cssText = `
+    left:${Math.random()*100}%;
+    top:${Math.random()*100}%;
+    animation-duration:${2+Math.random()*4}s;
+    animation-delay:${Math.random()*4}s;
+    width:${1+Math.random()*2}px;
+    height:${1+Math.random()*2}px;
+    opacity:${0.3+Math.random()*0.7};
+  `;
+  starsEl.appendChild(s);
+}
+
+/* ─── AVIONES ─── */
+const canvas = document.getElementById('skyCanvas');
+const planes = ['✈️','🛩️','✈️','🛫','✈️'];
+
+function spawnPlane() {
+  const el = document.createElement('div');
+  el.className = 'plane' + (Math.random() < 0.3 ? ' small' : Math.random() < 0.15 ? ' big' : '');
+  el.textContent = planes[Math.floor(Math.random() * planes.length)];
+
+  const topPct   = 5 + Math.random() * 85;
+  const duration = 12 + Math.random() * 20;
+  const drift    = (Math.random() - 0.5) * 120;
+  const tilt     = (Math.random() - 0.5) * 6;
+
+  el.style.cssText = `
+    top:${topPct}vh;
+    left:0;
+    --drift:${drift}px;
+    --tilt:${tilt}deg;
+    animation-duration:${duration}s;
+    animation-delay:0s;
+  `;
+
+  canvas.appendChild(el);
+  setTimeout(() => el.remove(), duration * 1000 + 500);
+}
+
+// Spawn inicial y luego periódico
+spawnPlane();
+setInterval(spawnPlane, 4000);
+// Un par extra al inicio
+setTimeout(spawnPlane, 1500);
+setTimeout(spawnPlane, 3000);
+
+/* ─── SCROLL REVEAL ─── */
+const revealEls = document.querySelectorAll('.reveal');
+const observer  = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+revealEls.forEach(el => observer.observe(el));
+
+/* ─── PARALLAX HERO STRIP ─── */
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY;
+  const heroEl  = document.querySelector('.hero');
+  if (heroEl) {
+    heroEl.style.backgroundPositionY = (scrollY * 0.3) + 'px';
+  }
+  // Parallax suave en dest-heroes
+  document.querySelectorAll('.dest-hero').forEach(dh => {
+    const rect = dh.getBoundingClientRect();
+    const offset = (rect.top / window.innerHeight) * 40;
+    dh.style.backgroundPositionY = `calc(50% + ${offset}px)`;
+  });
+});
+</script>
 </body>
 </html>
